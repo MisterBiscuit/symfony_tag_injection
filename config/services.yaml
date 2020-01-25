@@ -25,3 +25,18 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Command\:
+        resource: '../src/Command'
+        tags:
+            - { name: 'console.command' }
+
+    # Tag all data extractors
+    _instanceof:
+        App\Services\Exporter\Extractors\ExtractorInterface:
+            tags: ['app.data_extractor']
+
+    # Provide all services tagged as data extractors to the DataExporter service
+    App\Command\RunExport:
+        arguments:
+            $extractors: !tagged_iterator app.data_extractor
